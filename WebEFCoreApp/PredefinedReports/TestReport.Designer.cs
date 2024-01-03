@@ -387,7 +387,7 @@
             this.efDataSource1.ConnectionName = "efCoreConnection";
             efConnectionParameters1.ConnectionString = "";
             efConnectionParameters1.ConnectionStringName = "";
-            efConnectionParameters1.Source = typeof(global::WebDashboardDataSources.OrdersContext);
+            efConnectionParameters1.Source = typeof(global::DBContext.Data.ApplicationDbContext);
             this.efDataSource1.ConnectionParameters = efConnectionParameters1;
             this.efDataSource1.Name = "efDataSource1";
             // 

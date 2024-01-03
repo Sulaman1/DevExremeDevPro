@@ -27,26 +27,26 @@ namespace WebEFCoreApp.Data {
         public void InitializeDatabase() {
             Database.EnsureCreated();
 
-            var nwindJsonDataConnectionName = "NWindProductsJson";
-            if(!JsonDataConnections.Any(x => x.Name == nwindJsonDataConnectionName)) {
-                var newData = new JsonDataConnectionDescription {
-                    Name = nwindJsonDataConnectionName,
-                    DisplayName = "Northwind Products (JSON)",
-                    ConnectionString = "Uri=Data/nwind.json"
-                };
-                JsonDataConnections.Add(newData);
-            }
+            //var nwindJsonDataConnectionName = "NWindProductsJson";
+            //if(!JsonDataConnections.Any(x => x.Name == nwindJsonDataConnectionName)) {
+            //    var newData = new JsonDataConnectionDescription {
+            //        Name = nwindJsonDataConnectionName,
+            //        DisplayName = "Northwind Products (JSON)",
+            //        ConnectionString = "Uri=Data/nwind.json"
+            //    };
+            //    JsonDataConnections.Add(newData);
+            //}
 
 
-            var nwindSqlDataConnectionName = "NWindConnectionString";
-            if(!SqlDataConnections.Any(x => x.Name == nwindSqlDataConnectionName)) {
-                var newData = new SqlDataConnectionDescription {
-                    Name = nwindSqlDataConnectionName,
-                    DisplayName = "Northwind Data Connection",
-                    ConnectionString = "XpoProvider=SQLite;Data Source=|DataDirectory|/Data/nwind.db"
-                };
-                SqlDataConnections.Add(newData);
-            }
+            //var nwindSqlDataConnectionName = "NWindConnectionString";
+            //if(!SqlDataConnections.Any(x => x.Name == nwindSqlDataConnectionName)) {
+            //    var newData = new SqlDataConnectionDescription {
+            //        Name = nwindSqlDataConnectionName,
+            //        DisplayName = "Northwind Data Connection",
+            //        ConnectionString = "XpoProvider=SQLite;Data Source=|DataDirectory|/Data/nwind.db"
+            //    };
+            //    SqlDataConnections.Add(newData);
+            //}
 
             var reportsDataConnectionName = "ReportsDataSqlite";
             if(!SqlDataConnections.Any(x => x.Name == reportsDataConnectionName)) {
@@ -57,6 +57,19 @@ namespace WebEFCoreApp.Data {
                 };
                 SqlDataConnections.Add(newData);
             }
+
+            var reportSqlDataConnectionName = "Reporting";
+            if (!SqlDataConnections.Any(x => x.Name == reportSqlDataConnectionName))
+            {
+                var newData = new SqlDataConnectionDescription
+                {
+                    Name = reportSqlDataConnectionName,
+                    DisplayName = "Reporting Connection",
+                    ConnectionString = "XpoProvider=MSSqlServer; Server=SULAMAN-PC\\SQLEXPRESS06;Database=BLEPMISDb; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=True"
+                };
+                SqlDataConnections.Add(newData);
+            }
+
             SaveChanges();
         }
     }

@@ -13,7 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebEFCoreApp.Data;
 using WebEFCoreApp.Services;
-using WebDashboardDataSources;
+//using WebDashboardDataSources;
+using DBContext.Data;
+using DevExpress.AspNetCore.Internal;
 
 namespace WebEFCoreApp {
     public class Startup {
@@ -26,12 +28,19 @@ namespace WebEFCoreApp {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddDevExpressControls();
+            services.AddRazorPages();
             services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
             services
                 .AddMvc()
                 .AddNewtonsoftJson();
+
+
             services.ConfigureReportingServices(configurator => {
                 configurator.ConfigureReportDesigner(designerConfigurator => {
+                    designerConfigurator.RegisterDataSourceWizardConfigFileConnectionStringsProvider();
+                    
+                   // designerConfigurator.RegisterObjectDataSourceWizardTypeProvider<ObjectDataSourceWizardCustomTypeProvider>();
+                   // designerConfigurator.RegisterObjectDataSourceConstructorFilterService<CustomObjectDataSourceConstructorFilterService>();
                 });
                 configurator.ConfigureWebDocumentViewer(viewerConfigurator => {
                     viewerConfigurator.UseCachedReportSourceBuilder();
@@ -40,8 +49,12 @@ namespace WebEFCoreApp {
                 });
                 configurator.UseAsyncEngine();
             });
+
             services.AddDbContext<ReportDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("ReportsDataConnectionString")));
-            services.AddDbContext<OrdersContext>(options => options.UseSqlite(Configuration.GetConnectionString("NWindConnectionString")), ServiceLifetime.Transient);
+            //services.AddDbContext<OrdersContext>(options => options.UseSqlite(Configuration.GetConnectionString("NWindConnectionString")), ServiceLifetime.Transient);
+            //services.AddDbContext<ReportDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Reporting")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Reporting")), ServiceLifetime.Transient);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +63,7 @@ namespace WebEFCoreApp {
             var contentDirectoryAllowRule = DirectoryAccessRule.Allow(new DirectoryInfo(Path.Combine(env.ContentRootPath, "..", "Content")).FullName);
             AccessSettings.ReportingSpecificResources.TrySetRules(contentDirectoryAllowRule, UrlAccessRule.Allow());
             app.UseDevExpressControls();
+            
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
             if(env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
@@ -64,10 +78,12 @@ namespace WebEFCoreApp {
             app.UseRouting();
 
             app.UseAuthorization();
-            app.UseEndpoints(endpoints => {
+            
+            app.UseEndpoints(endpoints => {                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
